@@ -56,6 +56,8 @@ export const SelectedShapeActions = ({
           {renderAction("changeFontSize")}
 
           {renderAction("changeFontFamily")}
+
+          {renderAction("changeTextAlign")}
         </>
       )}
 
