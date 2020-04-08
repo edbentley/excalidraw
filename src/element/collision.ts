@@ -1,6 +1,6 @@
 import { distanceBetweenPointAndSegment } from "../math";
 
-import { ExcalidrawElement } from "./types";
+import { NonDeletedExcalidrawElement } from "./types";
 
 import { getDiamondPoints, getElementAbsoluteCoords } from "./bounds";
 import { Point } from "../types";
@@ -11,14 +11,14 @@ import { isLinearElement } from "./typeChecks";
 import { rotate } from "../math";
 
 const isElementDraggableFromInside = (
-  element: ExcalidrawElement,
+  element: NonDeletedExcalidrawElement,
   appState: AppState,
 ): boolean =>
   element.backgroundColor !== "transparent" ||
   appState.selectedElementIds[element.id];
 
 export const hitTest = (
-  element: ExcalidrawElement,
+  element: NonDeletedExcalidrawElement,
   appState: AppState,
   x: number,
   y: number,

@@ -1,4 +1,8 @@
-import { ExcalidrawElement, PointerType } from "./types";
+import {
+  ExcalidrawElement,
+  PointerType,
+  NonDeletedExcalidrawElement,
+} from "./types";
 
 import {
   OMIT_SIDES_FOR_MULTIPLE_ELEMENTS,
@@ -21,7 +25,7 @@ const isInHandlerRect = (
   y <= handler[1] + handler[3];
 
 export const resizeTest = (
-  element: ExcalidrawElement,
+  element: NonDeletedExcalidrawElement,
   appState: AppState,
   x: number,
   y: number,
@@ -63,7 +67,7 @@ export const resizeTest = (
 };
 
 export const getElementWithResizeHandler = (
-  elements: readonly ExcalidrawElement[],
+  elements: readonly NonDeletedExcalidrawElement[],
   appState: AppState,
   { x, y }: { x: number; y: number },
   zoom: number,
@@ -75,7 +79,7 @@ export const getElementWithResizeHandler = (
     }
     const resizeHandle = resizeTest(element, appState, x, y, zoom, pointerType);
     return resizeHandle ? { element, resizeHandle } : null;
-  }, null as { element: ExcalidrawElement; resizeHandle: ReturnType<typeof resizeTest> } | null);
+  }, null as { element: NonDeletedExcalidrawElement; resizeHandle: ReturnType<typeof resizeTest> } | null);
 
 export const getResizeHandlerFromCoords = (
   [x1, y1, x2, y2]: readonly [number, number, number, number],

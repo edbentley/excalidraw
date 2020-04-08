@@ -3,6 +3,7 @@ import {
   ExcalidrawTextElement,
   ExcalidrawLinearElement,
   ExcalidrawGenericElement,
+  NonDeleted,
 } from "../element/types";
 import { measureText } from "../utils";
 import { randomInteger, randomId } from "../random";
@@ -22,7 +23,7 @@ type ElementConstructorOpts = {
   angle?: ExcalidrawGenericElement["angle"];
 };
 
-const _newElementBase = <T extends ExcalidrawElement>(
+function _newElementBase<T extends ExcalidrawElement>(
   type: T["type"],
   {
     x,
@@ -38,45 +39,47 @@ const _newElementBase = <T extends ExcalidrawElement>(
     angle = 0,
     ...rest
   }: ElementConstructorOpts & Partial<ExcalidrawGenericElement>,
-) => ({
-  id: rest.id || randomId(),
-  type,
-  x,
-  y,
-  width,
-  height,
-  angle,
-  strokeColor,
-  backgroundColor,
-  fillStyle,
-  strokeWidth,
-  roughness,
-  opacity,
-  seed: rest.seed ?? randomInteger(),
-  version: rest.version || 1,
-  versionNonce: rest.versionNonce ?? 0,
-  isDeleted: rest.isDeleted ?? false,
-});
+) {
+  return {
+    id: rest.id || randomId(),
+    type,
+    x,
+    y,
+    width,
+    height,
+    angle,
+    strokeColor,
+    backgroundColor,
+    fillStyle,
+    strokeWidth,
+    roughness,
+    opacity,
+    seed: rest.seed ?? randomInteger(),
+    version: rest.version || 1,
+    versionNonce: rest.versionNonce ?? 0,
+    isDeleted: false as false,
+  };
+}
 
 export const newElement = (
   opts: {
     type: ExcalidrawGenericElement["type"];
   } & ElementConstructorOpts,
-): ExcalidrawGenericElement =>
-  _newElementBase<ExcalidrawGenericElement>(opts.type, opts);
+): NonDeleted<ExcalidrawGenericElement> => {
+  return _newElementBase<ExcalidrawGenericElement>(opts.type, opts);
+};
 
 export const newTextElement = (
   opts: {
     text: string;
     font: string;
   } & ElementConstructorOpts,
-): ExcalidrawTextElement => {
+): NonDeleted<ExcalidrawTextElement> => {
   const { text, font } = opts;
   const metrics = measureText(text, font);
   const textElement = newElementWith(
     {
       ..._newElementBase<ExcalidrawTextElement>("text", opts),
-      isDeleted: false,
       text: text,
       font: font,
       // Center the text
@@ -97,11 +100,13 @@ export const newLinearElement = (
     type: ExcalidrawLinearElement["type"];
     lastCommittedPoint?: ExcalidrawLinearElement["lastCommittedPoint"];
   } & ElementConstructorOpts,
-): ExcalidrawLinearElement => ({
-  ..._newElementBase<ExcalidrawLinearElement>(opts.type, opts),
-  points: [],
-  lastCommittedPoint: opts.lastCommittedPoint || null,
-});
+): NonDeleted<ExcalidrawLinearElement> => {
+  return {
+    ..._newElementBase<ExcalidrawLinearElement>(opts.type, opts),
+    points: [],
+    lastCommittedPoint: opts.lastCommittedPoint || null,
+  };
+};
 
 // Simplified deep clone for the purpose of cloning ExcalidrawElement only
 //  (doesn't clone Date, RegExp, Map, Set, Typed arrays etc.)
